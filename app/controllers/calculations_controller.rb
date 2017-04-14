@@ -11,19 +11,23 @@ class CalculationsController < ApplicationController
     # ================================================================================
 
 
-    @word_count = "Replace this string with your answer."
+    @word_count = @text.split.count
 
-    @character_count_with_spaces = "Replace this string with your answer."
+    @character_count_with_spaces = @text.length
 
-    @character_count_without_spaces = "Replace this string with your answer."
+    @character_count_without_spaces = @text.gsub(/\s+/,"").length
 
-    @occurrences = "Replace this string with your answer."
+    @occurrences = @text.split.count(@special_word)
 
     # ================================================================================
     # Your code goes above.
     # ================================================================================
 
     render("word_count.html.erb")
+  end
+
+  def payment(r,n,p)
+    pmt=(p*(r/12))/(1-(1+r/12)**-n)
   end
 
   def loan_payment
@@ -38,7 +42,7 @@ class CalculationsController < ApplicationController
     # The principal value the user input is in the decimal @principal.
     # ================================================================================
 
-    @monthly_payment = "Replace this string with your answer."
+    @monthly_payment = payment(@apr,@years,@principal)
 
     # ================================================================================
     # Your code goes above.
