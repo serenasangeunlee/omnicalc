@@ -15,19 +15,15 @@ class CalculationsController < ApplicationController
 
     @character_count_with_spaces = @text.length
 
-    @character_count_without_spaces = @text.gsub(/\s+/,"").length
+    @character_count_without_spaces = @text.length - @text.split(' ').count + 1
 
-    @occurrences = @text.split.count(@special_word)
+    @occurrences = @text.split(' ').count(@special_word)
 
     # ================================================================================
     # Your code goes above.
     # ================================================================================
 
     render("word_count.html.erb")
-  end
-
-  def payment(r,n,p)
-    pmt=p*(r/12)/(1-(1+r/12)**-(n*12))
   end
 
   def loan_payment
@@ -42,7 +38,7 @@ class CalculationsController < ApplicationController
     # The principal value the user input is in the decimal @principal.
     # ================================================================================
 
-    @monthly_payment = payment(@apr,@years,@principal)
+    @monthly_payment = ((@apr / 100 / 12) * @principal) / (1 - ((1 + (@apr / 100 / 12)) ** (-@years * 12)))
 
     # ================================================================================
     # Your code goes above.
@@ -64,54 +60,18 @@ class CalculationsController < ApplicationController
     #   number of seconds as a result.
     # ================================================================================
 
-    @seconds = @ending - @starting
-    @minutes = (@ending - @starting)/60
-    @hours = (@ending - @starting)/60/60
-    @days = (@ending - @starting)/60/60/24
-    @weeks = (@ending - @starting)/60/60/24/7
-    @years = (@ending - @starting)/60/60/24/7/52
+    @seconds = @ending -  @starting
+    @minutes = @seconds/60
+    @hours = @minutes/60
+    @days = @hours/24
+    @weeks = @days/7
+    @years = @weeks/52
 
     # ================================================================================
     # Your code goes above.
     # ================================================================================
 
     render("time_between.html.erb")
-  end
-
-  def sum(n)
-    n.inject(0) { |sum, x| sum + x }
-  end
-
-  def mean(n)
-    n.inject(0) {sum(n)} / n.size.to_f
-  end
-
-  def median(n, already_sorted=false)
-    return nil if n.empty?
-    n = n.sort unless already_sorted
-    m_pos = n.size / 2
-    return n.size % 2 == 1 ? n[m_pos] : mean(n[m_pos-1..m_pos])
-  end
-
-  def variance(n)
-    m = mean(n)
-    n.inject(0) { |variance, x| variance + ((x - m) **2) }
-  end
-
-  def standard_deviation(n)
-    m = mean(n)
-    v = variance(n)
-    return m, Math.sqrt(v/(n.size-1))
-  end
-
-  def modes(n, find_all=true)
-    histogram = n.inject(Hash.new(0)) { |h, n| h[n] += 1; h }
-    modes = nil
-    histogram.each_pair do |item, times|
-      modes << item if modes && times == modes[0] and find_all
-      modes = [times, item] if (!modes && times>1) or (modes && times>modes[0])
-    end
-    return modes ? modes[1...modes.size] : modes
   end
 
   def descriptive_statistics
@@ -151,6 +111,7 @@ class CalculationsController < ApplicationController
     @standard_deviation = Math.sqrt(@variance)
 
     @freq = @numbers.inject(Hash.new(0)) {|h,v| h[v] += 1; h}
+
     @mode=@numbers.max_by { |v| @freq[v]}
 
     # ================================================================================
