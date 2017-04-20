@@ -10,14 +10,10 @@ class CalculationsController < ApplicationController
     # The special word the user input is in the string @special_word.
     # ================================================================================
 
-
     @word_count = @text.split.count
-
-    @character_count_with_spaces = @text.length
-
-    @character_count_without_spaces = @text.length - @text.split(' ').count + 1
-
-    @occurrences = @text.split(' ').count(@special_word)
+    @character_count_with_spaces = @text.length - @text.count("\r")
+    @character_count_without_spaces = @text.gsub(" ","").length - @text.count("\n") - @text.count("\r")
+    @occurrences = @text.downcase.scan(@special_word.downcase).count
 
     # ================================================================================
     # Your code goes above.
@@ -83,35 +79,24 @@ class CalculationsController < ApplicationController
     # ================================================================================
 
     @sorted_numbers = @numbers.sort
-
     @count = @numbers.count
-
     @minimum = @numbers.min
-
     @maximum = @numbers.max
-
     @range = @maximum - @minimum
-
     @list = @sorted_numbers.length
     if @list %2 != 0
       @median = @sorted_numbers[@list/2]
     else
-      @median = (@sorted_numbers[@list/2]+@sorted_numbers[(@list/2)-1])/2.0
+      @median = (@sorted_numbers[@list/2] + @sorted_numbers[(@list/2)-1])/2.0
     end
-
     @sum = @numbers.sum
-
     @mean = @sum / @count
-
     @variance = 0
     @numbers.each do |x|
       @variance = @variance + ((x-@mean)**2)/@count
     end
-
     @standard_deviation = Math.sqrt(@variance)
-
     @freq = @numbers.inject(Hash.new(0)) {|h,v| h[v] += 1; h}
-
     @mode=@numbers.max_by { |v| @freq[v]}
 
     # ================================================================================
